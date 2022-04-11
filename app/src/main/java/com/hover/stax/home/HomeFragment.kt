@@ -109,14 +109,13 @@ class HomeFragment : Fragment() {
                 with(binding.wellnessCard) {
                     tipsCard.visibility = View.VISIBLE
 
-                    title.text = tip.title
-                    snippet.text = tip.snippet
+                    snippet.text = tip.title
 
-                    contentLayout.setOnClickListener {
+                    snippet.setOnClickListener {
                         NavUtil.navigate(findNavController(), HomeFragmentDirections.actionNavigationHomeToWellnessFragment(tip.id))
                     }
 
-                    readMoreLayout.setOnClickListener {
+                    tipCTA.setOnClickListener {
                         NavUtil.navigate(findNavController(), HomeFragmentDirections.actionNavigationHomeToWellnessFragment(null))
                     }
                 }

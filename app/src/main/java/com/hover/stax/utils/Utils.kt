@@ -236,7 +236,7 @@ object Utils {
     }
 
     fun openStaxPlaystorePage(activity: Activity) {
-        val link = Uri.parse(activity.baseContext.getString(R.string.stax_market_playstore_link))
+        val link = Uri.parse(activity.getString(R.string.stax_market_playstore_link))
         val goToMarket = Intent(Intent.ACTION_VIEW, link)
         goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
         try {

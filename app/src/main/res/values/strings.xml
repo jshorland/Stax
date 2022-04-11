@@ -674,6 +674,7 @@
     <string name="btn_update">Update</string>
 
     <string name="btn_not_now">Not Now</string>
+    <string name="tip_title"><u>Tip of the day</u></string>
 
 
 </resources>
