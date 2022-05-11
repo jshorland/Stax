@@ -1,8 +1,6 @@
 package com.hover.stax.transactions
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
@@ -10,14 +8,15 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
-import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.hover.sdk.actions.HoverAction
 import com.hover.sdk.api.Hover
 import com.hover.sdk.transactions.Transaction
@@ -32,12 +31,9 @@ import com.hover.stax.utils.DateUtils
 import com.hover.stax.utils.NavUtil
 import com.hover.stax.utils.UIHelper
 import com.hover.stax.utils.Utils
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
 import org.json.JSONException
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 
 class TransactionDetailsFragment : Fragment() {
@@ -50,6 +46,7 @@ class TransactionDetailsFragment : Fragment() {
     private val args: TransactionDetailsFragmentArgs by navArgs()
 
     private lateinit var childFragManager: FragmentManager
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<RelativeLayout>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         viewModel.setTransaction(args.uuid)
@@ -123,7 +120,27 @@ class TransactionDetailsFragment : Fragment() {
                     retryTransactionClicked(transaction, button)
             } else binding.secondaryStatus.transactionRetryButtonLayoutId.visibility = GONE
             updateDetails(transaction)
+            showShareExcitement(!transaction.isRecorded && transaction.isSuccessful)
         }
+    }
+
+    private fun showShareExcitement(isTransactionSuccessful: Boolean) {
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.shareLayout.bottomSheet)
+        val shouldShow = args.isNewTransaction && isTransactionSuccessful
+        setBottomSheetVisibility(shouldShow)
+    }
+
+    private fun setBottomSheetVisibility(isVisible: Boolean) {
+        var updatedState = BottomSheetBehavior.STATE_HIDDEN
+
+        if(isVisible) {
+            updatedState = BottomSheetBehavior.STATE_EXPANDED
+            val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_down)
+            binding.shareLayout.bottomSheet.visibility = VISIBLE
+            binding.shareLayout.bottomSheet.animation = animation
+            binding.shareLayout.shareBtn.setOnClickListener { Utils.shareStax(requireActivity()) }
+        }
+        bottomSheetBehavior.state = updatedState
     }
 
     private fun showButtonToClick(): TextView {
